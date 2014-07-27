@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import os
 import six
 
 import datetime
@@ -308,14 +309,18 @@ class ImageValue(Value):
             return None
 
         hashed_name = md5(six.text_type(time.time())).hexdigest() + value.name[-4:]
-        image_path = pjoin(self._upload_to, hashed_name)
-        dest_name = pjoin(settings.MEDIA_ROOT, image_path)
+        dest_path = pjoin(settings.MEDIA_ROOT, self._upload_to)
+        dest_name = pjoin(dest_path, hashed_name)
+
+        if not os.path.exists(dest_name):
+            os.makedirs(dest_path)
 
         with open(dest_name, 'wb+') as dest_file:
             for chunk in value.chunks():
                 dest_file.write(chunk)
 
-        return six.text_type(image_path)
+        image_db_path = pjoin(self._upload_to, hashed_name)
+        return six.text_type(image_db_path)
 
     def to_editor(self, value):
         "Returns a value suitable for display in a form widget"

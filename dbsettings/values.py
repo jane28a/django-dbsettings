@@ -312,7 +312,7 @@ class ImageValue(Value):
         dest_path = pjoin(settings.MEDIA_ROOT, self._upload_to)
         dest_name = pjoin(dest_path, hashed_name)
 
-        if not os.path.exists(dest_name):
+        if not os.path.exists(dest_path):
             os.makedirs(dest_path)
 
         with open(dest_name, 'wb+') as dest_file:

@@ -30,7 +30,13 @@ Requirements
 +------------------+------------+--------------+
 | Dbsettings       | Python     | Django       |
 +==================+============+==============+
-| >=0.7            | 3.2        | 1.5 - 1.7    |
+| ==0.8            | 3.2        | 1.5 - 1.8    |
+|                  +------------+--------------+
+|                  | 2.7        | 1.4 - 1.8    |
+|                  +------------+--------------+
+|                  | 2.6        | 1.4 - 1.6    |
++------------------+------------+--------------+
+| ==0.7            | 3.2        | 1.5 - 1.7    |
 |                  +------------+--------------+
 |                  | 2.7        | 1.3 - 1.7    |
 |                  +------------+--------------+
@@ -63,6 +69,13 @@ In order to setup database storage, and to let Django know about your use of
         ...
     )
 
+If your Django project utilizes ``sites`` framework, all setting would be related
+to some site. If ``sites`` are not present, settings won't be connected to any site
+(and ``sites`` framework is no longer required since 0.8.1).
+
+You can force to do (not) use ``sites`` via ``DBSETTINGS_USE_SITES = True / False``
+configuration variable (put it in project's ``settings.py``).
+
 URL Configuration
 -----------------
 
@@ -93,7 +106,7 @@ causing your application to ignore the new changes.
 No other backends exhibit this behavior, but since ``simple`` is the default,
 make sure to specify a proper backend when moving to a production environment.
 
-.. _`cache framework`: http://www.djangoproject.com/documentation/cache/
+.. _`cache framework`: http://docs.djangoproject.com/en/dev/topics/cache/
 
 Usage
 =====
@@ -140,7 +153,7 @@ lower-case, as it will be capitalized as necessary, automatically.
     class EmailOptions(dbsettings.Group):
         enabled = dbsettings.BooleanValue('whether to send emails or not')
         sender = dbsettings.StringValue('address to send emails from')
-        subject = dbsettings.StringValue()
+        subject = dbsettings.StringValue(default='SiteMail')
 
 For more descriptive explanation, the ``help_text`` argument can be used. It
 will be shown in the editor.
@@ -247,6 +260,7 @@ the ``ImageLimits`` were already defined.
     False
     >>> models.email.sender
     >>> models.email.subject
+    'SiteMail'  # Since default was defined
 
     # ImageLimits are defined
     >>> models.Image.limits.maximum_width
@@ -435,10 +449,25 @@ some of the settings provided earlier in this document::
 Changelog
 =========
 
-**0.7**
+**0.8.1** (21/06/2015)
+    - Made ``django.contrib.sites`` framework dependency optional
+    - Added migration for app
+**0.8.0** (16/04/2015)
+    - Switched to using django.utils.six instead of standalone six.
+    - Dropped compatibility with Django 1.3
+    - Tested with Django 1.8
+**0.7.4** (24/03/2015)
+    - Added default values for fields.
+    - Fixed Python 3.3 compatibility
+    - Added creation of folders with ImageValue
+**0.7.3**, **0.7.2**
+    pypi problems
+**0.7.1** (11/03/2015)
+    - Fixed pypi distribution.
+**0.7** (06/07/2014)
     - Added PasswordValue
     - Added compatibility with Django 1.6 and 1.7.
-**0.6**
+**0.6** (16/09/2013)
     - Added compatibility with Django 1.5 and python3, dropped support for Django 1.2.
     - Fixed permissions: added permission for editing non-model (module-level) settings
     - Make PIL/Pillow not required in setup.py

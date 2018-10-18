@@ -6,6 +6,8 @@ from django import forms
 from django.utils.text import capfirst
 
 from dbsettings.loading import get_setting_storage
+from dbsettings.models import Setting
+from django.contrib.auth import get_permission_codename
 
 
 RE_FIELD_NAME = re.compile(r'^(.+)__(.*)__(.+)$')
@@ -46,9 +48,9 @@ def customized_editor(user, settings):
     verbose_names = {}
     apps = {}
     for setting in settings:
-        perm = '%s.can_edit_%s_settings' % (
-            setting.app,
-            setting.class_name.lower()
+        perm = '%s.%s' % (
+            Setting._meta.app_label,
+            get_permission_codename('change', Setting._meta)
         )
         if user.has_perm(perm):
             # Add the field to the customized field list
